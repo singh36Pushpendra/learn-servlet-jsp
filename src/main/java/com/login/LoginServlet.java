@@ -22,6 +22,7 @@ import java.util.regex.Pattern;
 )
 public class LoginServlet extends HttpServlet {
 
+    private static final String PWD_PATTERN = "^(?=.{8,})(?=.*[A-Z])(?=.*[0-9])[a-zA-Z0-9]*[@#$%^&()+-_][a-zA-Z0-9]*$";
     static boolean validate(final String regex, String input) {
         return Pattern.compile(regex).matcher(input).matches();
     }
@@ -39,7 +40,7 @@ public class LoginServlet extends HttpServlet {
         String uname = servletConfig.getInitParameter("username");
         String upwd = servletConfig.getInitParameter("password");
 
-        if (validate("^[A-Z][a-z]{2}*$", user))
+        if (validate("^[A-Z][a-z]{2}*$", user) && validate(PWD_PATTERN, pwd))
             // Checking user credentials.
             if (uname.equals(user) && upwd.equals(pwd)) {
                 req.setAttribute("user", user);
@@ -52,7 +53,7 @@ public class LoginServlet extends HttpServlet {
                     rd.include(req, resp);
                 }
             }
-            else
-                req.getRequestDispatcher("login.html").forward(req, resp);
+        else
+            req.getRequestDispatcher("login.html").forward(req, resp);
     }
 }
